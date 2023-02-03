@@ -10,11 +10,12 @@ class coffeeSc extends StatefulWidget {
   State<coffeeSc> createState() => _coffeeScState();
 }
 
+double initPage=8.0;
 class _coffeeScState extends State<coffeeSc> {
-  PageController _pageController = PageController(viewportFraction: 0.30);
+  PageController _pageController = PageController(initialPage: initPage.toInt(),viewportFraction: 0.30);
 
-  double currentPage = 0.0;
-  int currentPageAsInt = 0;
+  double currentPage = initPage;
+  int currentPageAsInt = initPage.toInt();
   _coffeListener() {
     setState(() {
       currentPage = _pageController.page!;
@@ -31,6 +32,7 @@ class _coffeeScState extends State<coffeeSc> {
   void dispose() {
     // TODO: implement dispose
     _pageController.removeListener(_coffeListener);
+    super.dispose();
   }
 
   @override
@@ -119,7 +121,9 @@ class _coffeeScState extends State<coffeeSc> {
                           ..scale(val),
                         child: Opacity(
                             opacity: opacityVal,
-                            child: Image.asset(coffeeItem.image)));
+                            child: Hero(
+                              tag: coffeeItem.name,
+                              child: Image.asset(coffeeItem.image))));
                   },
                 ),
               ),

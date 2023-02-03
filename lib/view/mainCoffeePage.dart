@@ -1,3 +1,4 @@
+import 'package:coffee_expresso/model/coffe.dart';
 import 'package:coffee_expresso/view/coffeSection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -40,20 +41,28 @@ class mainCoffeePage extends StatelessWidget {
             Positioned(
                 height: deviceSize.height * 0.4,
                 top: deviceSize.height * 0.15,
-                child: Image.asset('assets/images/coffeImage/7.png')),
+                child: Hero(
+                  tag: coffees[6].name,
+                  child: Image.asset(coffees[6].image))),
             Positioned(
                 height: deviceSize.height,
                 bottom: -deviceSize.height * 0.4,
-                child: Image.asset(
-                  'assets/images/coffeImage/8.png',
-                  fit: BoxFit.cover,
+                child: Hero(
+                  tag:coffees[7].name,
+                  child: Image.asset(
+                    coffees[7].image,
+                    fit: BoxFit.cover,
+                  ),
                 )),
             Positioned(
                 height: deviceSize.height,
                 bottom: -deviceSize.height * 0.8,
-                child: Image.asset(
-                  'assets/images/coffeImage/1.png',
-                  fit: BoxFit.cover,
+                child: Hero(
+                  tag: coffees[8].name,
+                  child: Image.asset(
+                    coffees[8].image,
+                    fit: BoxFit.cover,
+                  ),
                 )),
           ],
         ),
