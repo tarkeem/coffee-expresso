@@ -1,5 +1,5 @@
-import 'package:coffee_expresso/model/coffe.dart';
-import 'package:coffee_expresso/view/coffeSection.dart';
+import 'package:flutter_application_1/model/coffe.dart';
+import 'package:flutter_application_1/view/coffeSection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -15,7 +15,7 @@ class mainCoffeePage extends StatelessWidget {
         onVerticalDragUpdate: (details) {
           if (details.primaryDelta! < -20) {
             Navigator.of(context).push(PageRouteBuilder(
-              transitionDuration: Duration(milliseconds: 600),
+              transitionDuration: Duration(milliseconds: 800),
               pageBuilder: (context, animation, secondaryAnimation) =>
                   FadeTransition(
                     child: coffeeSc(),
@@ -40,7 +40,7 @@ class mainCoffeePage extends StatelessWidget {
             ),
             Positioned(
                 height: deviceSize.height * 0.4,
-                top: deviceSize.height * 0.15,
+                top: deviceSize.height * 0.25,
                 child: Hero(
                   tag: coffees[6].name,
                   child: Image.asset(coffees[6].image))),
@@ -50,7 +50,7 @@ class mainCoffeePage extends StatelessWidget {
                 child: Hero(
                   tag:coffees[7].name,
                   child: Image.asset(
-                    coffees[7].image,
+                    coffees[8].image,
                     fit: BoxFit.cover,
                   ),
                 )),
@@ -60,7 +60,7 @@ class mainCoffeePage extends StatelessWidget {
                 child: Hero(
                   tag: coffees[8].name,
                   child: Image.asset(
-                    coffees[8].image,
+                    coffees[7].image,
                     fit: BoxFit.cover,
                   ),
                 )),
