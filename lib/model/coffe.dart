@@ -9,6 +9,7 @@ class coffee {
 
 List coffee_Names = [
   'Caramel Macchiato',
+  'Milk Matcha',
   'Caramel Cold Drink',
   'Iced Coffe Mocha',
   'Caramelized Pecan Latte',
@@ -18,9 +19,22 @@ List coffee_Names = [
   'Americano',
   'Vietnamese',
   'Style_Iced Coffee',
-  ' Black Tea Latte',
-  ' Classic Irish Coffee',
-  ' Toffee Nut Crunch Latte',
+  'Vodka',
+  'Fresh Apple Juice',
+  'Fresh Mango juice',
+  'Pink Coctail',
+  'Coca',
+  'Chrismas Coctail',
+  'De Vo Coctail',
+  'La Pra Coctail',
+  'lU Coctail',
+  'Rain Coctail',
+  'Rob Coctail',
 ];
 
-List coffees = List.generate(coffee_Names.length, (index) => coffee(coffee_Names[index], 'assets/images/coffeImage/${index+1}.png', Random().nextInt(50)+20));
+List coffees = List.generate(
+    coffee_Names.length,
+    (index) => coffee(
+        coffee_Names[index],
+        'assets/images/coffeImage/${index + 1}.png',
+        Random().nextInt(50) + 20));

@@ -20,6 +20,15 @@ class _coffeeScState extends State<coffeeSc> {
 
   double currentPage = initPage;
   int currentPageAsInt = initPage.toInt();
+
+  get calculateCost {
+    int cost = 0;
+    orderCoffe.forEach((element) {
+      cost += element.price;
+    });
+    return cost;
+  }
+
   _coffeListener() {
     setState(() {
       currentPage = _pageController.page!;
@@ -40,6 +49,7 @@ class _coffeeScState extends State<coffeeSc> {
   }
 
   List<coffee> orderCoffe = [];
+  bool isSwaped = false;
   @override
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
@@ -65,22 +75,23 @@ class _coffeeScState extends State<coffeeSc> {
                   controller: _pageController,
                   scrollDirection: Axis.vertical,
                   itemCount: coffees.length + 1,
+                  onPageChanged: (value) {
+                    if (value < coffee_Names.length) {
+                      currentPageAsInt = value;
+                    }
+                  },
                   itemBuilder: (context, index) {
-                    currentPageAsInt = index - 2;
                     if (index == 0) {
                       return SizedBox.shrink();
                     } else if (index == coffees.length + 1) {
-                      _pageController.animateToPage(0,
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.linear);
-                      return SizedBox.shrink();
+                      return Image.asset(coffees[0].image);
                     } else {
                       coffee coffeeItem = coffees[index - 1];
                       var res = currentPage - index + 1;
                       var val = -0.4 * res + 1;
                       var opacityVal = (val + 0.3).clamp(0.0, 1.0);
 
-                      print('$index $res  $val  $opacityVal ');
+                      //print('$index $res  $val  $opacityVal ');
 
                       return Transform(
                           alignment: Alignment.center,
@@ -100,6 +111,10 @@ class _coffeeScState extends State<coffeeSc> {
                                     tag: coffeeItem.name,
                                     child: InkWell(
                                       onTap: () {
+                                        for (coffee x in coffees) {
+                                          print(x.image);
+                                        }
+                                        print(coffee_Names.length);
                                         setState(() {
                                           orderCoffe
                                               .add(coffees[currentPageAsInt]);
@@ -117,43 +132,104 @@ class _coffeeScState extends State<coffeeSc> {
               ),
             ),
           ),
-          Positioned(
+          AnimatedPositioned(
+              curve: Curves.bounceOut,
+              duration: Duration(milliseconds: 700),
               bottom: 0,
               left: 0,
               right: 0,
-              height: kToolbarHeight,
-              child: Container(
-                clipBehavior: Clip.hardEdge,
-                child: Row(
-                  children: [
-                    Text(
-                      'Your Order: ',
-                      style:
-                          TextStyle(fontSize: 20, fontFamily: 'BloodySunday',color: Colors.white),
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            ...orderCoffe.map((e) => orderIcon(e)).toList()
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20)),
-                    gradient: RadialGradient(radius: 4, colors: [
-                      Color.fromARGB(255, 108, 28, 212),
-                      Colors.black
-                    ])),
-              ))
+              height: isSwaped ? deviceSize.height * 0.6 : kToolbarHeight,
+              child: GestureDetector(
+                  onVerticalDragUpdate: (details) {
+                    setState(() {
+                      if (details.primaryDelta! <= 0) {
+                        isSwaped = true;
+                      } else {
+                        isSwaped = false;
+                      }
+                    });
+                  },
+                  child: orderBottomBar()))
         ],
       ),
+    );
+  }
+
+  Container orderBottomBar() {
+    return Container(
+      clipBehavior: Clip.hardEdge,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (!isSwaped) ...[
+            Row(
+              children: [
+                Text(
+                  'Your Order: ',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'BloodySunday',
+                      color: Colors.white),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ...orderCoffe
+                            .map((e) => GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    orderCoffe.removeAt(orderCoffe.indexOf(e));
+                                  });
+                                },
+                                child: orderIcon(e)))
+                            .toList(),
+                      ],
+                    ),
+                  ),
+                ),
+                Text(
+                  '$calculateCost \$',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'BloodySunday',
+                      color: Colors.white),
+                ),
+              ],
+            ),
+          ] else ...[
+            Expanded(
+                child: ListView.builder(
+              itemCount: orderCoffe.length,
+              itemBuilder: (context, index) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    orderIcon(orderCoffe[index]),
+                    Text(
+                      '${orderCoffe[index].name}',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'BloodySunday',
+                          color: Colors.white),
+                    ),
+                  ],
+                );
+              },
+            )),
+            ElevatedButton.icon(onPressed: () {
+              
+            }, icon: Icon(Icons.shopping_basket), label:Text('Buy Now'))
+          ],
+        ],
+      ),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          gradient: RadialGradient(
+              radius: 4,
+              colors: [Color.fromARGB(255, 108, 28, 212), Colors.black])),
     );
   }
 
@@ -193,7 +269,8 @@ class _coffeeScState extends State<coffeeSc> {
                 fontSize: 25,
                 fontWeight: FontWeight.w700,
                 fontFamily: 'BloodySunday'),
-            key: Key('${coffees[currentPageAsInt.clamp(0, 12)].price}'),
+            key: Key(
+                '${coffees[currentPageAsInt.clamp(0, coffees.length)].price}'),
           ),
         ),
         AnimatedSwitcher(
@@ -204,9 +281,13 @@ class _coffeeScState extends State<coffeeSc> {
               position: animation
                   .drive(Tween(begin: Offset(8, 0), end: Offset(0, 0)))),
           child: Text(
-            '${coffees[currentPageAsInt.clamp(0, 12)].name}',
-            style: TextStyle(fontFamily: 'BloodySunday',fontSize: 25, fontWeight: FontWeight.w700),
-            key: Key('${coffees[currentPageAsInt.clamp(0, 12)].name}'),
+            '${coffees[currentPageAsInt.clamp(0, coffees.length)].name}',
+            style: TextStyle(
+                fontFamily: 'BloodySunday',
+                fontSize: 25,
+                fontWeight: FontWeight.w700),
+            key: Key(
+                '${coffees[currentPageAsInt.clamp(0, coffees.length)].name}'),
           ),
         ),
       ],
