@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_application_1/main.dart';
-import 'package:flutter_application_1/view/widget/orderIcon.dart';
+import 'package:drinkoo/main.dart';
+import 'package:flutter/widgets.dart';
+import 'package:lottie/lottie.dart';
+import 'package:drinkoo/view/widget/orderIcon.dart';
 import '../model/coffe.dart';
 
 class coffeeSc extends StatefulWidget {
@@ -14,9 +17,10 @@ class coffeeSc extends StatefulWidget {
 
 double initPage = 8.0;
 
-class _coffeeScState extends State<coffeeSc> {
+class _coffeeScState extends State<coffeeSc>with SingleTickerProviderStateMixin {
   PageController _pageController =
       PageController(initialPage: initPage.toInt(), viewportFraction: 0.30);
+      late AnimationController _animationController;
 
   double currentPage = initPage;
   int currentPageAsInt = initPage.toInt();
@@ -39,6 +43,7 @@ class _coffeeScState extends State<coffeeSc> {
   void initState() {
     // TODO: implement initState
     _pageController.addListener(_coffeListener);
+    _animationController=AnimationController(vsync: this,duration: Duration(seconds: 5));
   }
 
   @override
@@ -54,12 +59,14 @@ class _coffeeScState extends State<coffeeSc> {
   Widget build(BuildContext context) {
     var deviceSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.transparent.withOpacity(0)),
+      //appBar: AppBar(backgroundColor: Colors.transparent.withOpacity(0)),
       body: Stack(
         children: [
           Align(
             alignment: Alignment.topCenter,
-            child: DrinkInfo(),
+            child: Padding(
+              padding: EdgeInsets.only(top: deviceSize.height*0.1),
+              child: DrinkInfo()),
           ),
           /*Positioned(
               top: deviceSize.height * 0.7,
@@ -89,18 +96,21 @@ class _coffeeScState extends State<coffeeSc> {
                       coffee coffeeItem = coffees[index - 1];
                       var res = currentPage - index + 1;
                       var val = -0.4 * res + 1;
-                      var opacityVal = (val + 0.3).clamp(0.0, 1.0);
-
-                      //print('$index $res  $val  $opacityVal ');
+                      var opacityVal = (val + 0.07).clamp(0.0, 1.0);
+                      if(index==10||index==11)
+                      {
+                         print('index $index res $res val $val  $opacityVal ');
+                      }
+                     
 
                       return Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.identity()
-                            ..setEntry(3, 2, 0.001)
+                            ..setEntry(3, 2, 0.02)
                             ..translate(
                                 0.0,
                                 (MediaQuery.of(context).size.height /
-                                    2.6 *
+                                    2.2 *
                                     (1 - val).abs()),
                                 0.0)
                             ..scale(val, val, val),
@@ -109,7 +119,7 @@ class _coffeeScState extends State<coffeeSc> {
                                 opacity: opacityVal,
                                 child: Hero(
                                     tag: coffeeItem.name,
-                                    child: InkWell(
+                                    child: GestureDetector(
                                       onTap: () {
                                         for (coffee x in coffees) {
                                           print(x.image);
@@ -149,54 +159,64 @@ class _coffeeScState extends State<coffeeSc> {
                       }
                     });
                   },
-                  child: orderBottomBar()))
+                  child: orderBottomBar(deviceSize)))
         ],
       ),
     );
   }
 
-  Container orderBottomBar() {
+  Container orderBottomBar(Size deviceSize) {
     return Container(
-      clipBehavior: Clip.hardEdge,
+      clipBehavior: Clip.none,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (!isSwaped) ...[
-            Row(
-              children: [
-                Text(
-                  'Your Order: ',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'BloodySunday',
-                      color: Colors.white),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        ...orderCoffe
-                            .map((e) => GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    orderCoffe.removeAt(orderCoffe.indexOf(e));
-                                  });
-                                },
-                                child: orderIcon(e)))
-                            .toList(),
-                      ],
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                children: [
+                  Text(
+                    'Your Order: ',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: 'BloodySunday',
+                        color: Colors.white),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          ...orderCoffe
+                              .map((e) => GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      orderCoffe.removeAt(orderCoffe.indexOf(e));
+                                    });
+                                  },
+                                  
+                                    child: TweenAnimationBuilder(
+                                      curve: Curves.bounceOut,
+                                      duration: Duration(milliseconds: 700),
+                                      tween: Tween<double>(begin: 1,end: 0),
+                                      builder:(context, value, child) =>Transform.translate(
+                                        offset: Offset(0, (-deviceSize.height/2)*value),
+                                        child: orderIcon(e)))))
+                              .toList(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Text(
-                  '$calculateCost \$',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'BloodySunday',
-                      color: Colors.white),
-                ),
-              ],
+                  Text(
+                    '$calculateCost \$',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: 'BloodySunday',
+                        color: Colors.white),
+                  ),
+                ],
+              ),
             ),
           ] else ...[
             Expanded(
@@ -218,9 +238,18 @@ class _coffeeScState extends State<coffeeSc> {
                 );
               },
             )),
-            ElevatedButton.icon(onPressed: () {
-              
-            }, icon: Icon(Icons.shopping_basket), label:Text('Buy Now'))
+            GestureDetector(
+              onTap: () {
+                _animationController.forward().whenComplete(() {
+                  orderCoffe.clear();
+                  setState(() {
+                    isSwaped=false;
+                  });
+                });
+              },
+              child: SizedBox(
+                width: deviceSize.width*0.4,
+                child: Lottie.asset('assets/cartbutton.json',controller:_animationController )))
           ],
         ],
       ),

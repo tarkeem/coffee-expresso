@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_application_1/model/coffe.dart';
+import 'package:drinkoo/model/coffe.dart';
 
 class orderIcon extends StatelessWidget {
   

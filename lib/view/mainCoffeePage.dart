@@ -1,5 +1,5 @@
-import 'package:flutter_application_1/model/coffe.dart';
-import 'package:flutter_application_1/view/coffeSection.dart';
+import 'package:drinkoo/model/coffe.dart';
+import 'package:drinkoo/view/coffeSection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -13,7 +13,7 @@ class mainCoffeePage extends StatelessWidget {
     return Scaffold(
       body: GestureDetector(
         onVerticalDragUpdate: (details) {
-          if (details.primaryDelta! < -20) {
+          if (details.primaryDelta! < -10) {
             Navigator.of(context).push(PageRouteBuilder(
               transitionDuration: Duration(milliseconds: 800),
               pageBuilder: (context, animation, secondaryAnimation) =>
@@ -40,18 +40,20 @@ class mainCoffeePage extends StatelessWidget {
             ),
             Positioned(
                 height: deviceSize.height * 0.4,
-                top: deviceSize.height * 0.25,
+                top: deviceSize.height * 0.3,
                 child: Hero(
                   tag: coffees[6].name,
-                  child: Image.asset(coffees[6].image))),
+                  child:
+                    Image.asset(coffees[6].image,),)),
             Positioned(
                 height: deviceSize.height,
                 bottom: -deviceSize.height * 0.4,
+                width: deviceSize.width*0.9,
                 child: Hero(
                   tag:coffees[7].name,
                   child: Image.asset(
-                    coffees[8].image,
-                    fit: BoxFit.cover,
+                    coffees[7].image,
+                    fit: BoxFit.fill,
                   ),
                 )),
             Positioned(
@@ -60,7 +62,7 @@ class mainCoffeePage extends StatelessWidget {
                 child: Hero(
                   tag: coffees[8].name,
                   child: Image.asset(
-                    coffees[7].image,
+                    coffees[8].image,
                     fit: BoxFit.cover,
                   ),
                 )),
